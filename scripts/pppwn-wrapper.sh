@@ -15,10 +15,7 @@ if [ ! -f "${CONFIG}" ]; then echo "to load the config file ${CONFIG}"; exit 1; 
 
 source "${CONFIG}"
 
-(ip link set "${INTERFACE}" down && sleep 2 && ip link set "${INTERFACE}" up && sleep 2) \
-    || die "to reload the interface ${INTERFACE}"
-
-info "Ready, starting the actual exploit"
+(ip link set "${INTERFACE}" down && sleep 2 && ip link set "${INTERFACE}" up && sleep 2) || exit 1
 
 if "${BASEDIR}"/pppwn --interface "${INTERFACE}" --fw "${FIRMWAREVERSION}" --stage1 \
     "${STAGES_DIR}/stage1_${FIRMWAREVERSION}.bin" --stage2 \
