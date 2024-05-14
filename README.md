@@ -1,6 +1,6 @@
 # PS4 PPPwn with Fedora (aarch64)
 
-**DISCLAIMER**: This work is based on the work published by others and its meant to serve as a reference for getting it work on Fedora(RPI)
+**DISCLAIMER**: This work is based on the work published by others and its meant to serve as a reference for getting it to work on a RPI 3 B+ running Fedora 40.
 
 ## Prerequisites
 
