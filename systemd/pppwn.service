@@ -1,0 +1,10 @@
+[Unit]
+Description=PS4 PPPwn
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/pppwn-wrapper
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
