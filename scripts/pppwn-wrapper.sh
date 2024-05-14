@@ -11,7 +11,9 @@ BASEDIR=$(dirname "$0")
 CONFIG=$(dirname "${BASEDIR}")/etc/pppwn.conf
 STAGES_DIR=$(dirname "${BASEDIR}")/share/pppwn
 
-if ! (eval "${CONFIG}"); then echo "to load the config file ${CONFIG}"; exit 1; fi
+if [ ! -f "${CONFIG}" ]; then echo "to load the config file ${CONFIG}"; exit 1; fi
+
+source "${CONFIG}"
 
 (ip link set "${INTERFACE}" down && sleep 2 && ip link set "${INTERFACE}" up && sleep 2) \
     || die "to reload the interface ${INTERFACE}"
