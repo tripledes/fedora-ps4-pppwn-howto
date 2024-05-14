@@ -21,5 +21,7 @@ if "${BASEDIR}"/pppwn --interface "${INTERFACE}" --fw "${FIRMWAREVERSION}" --sta
     "${STAGES_DIR}/stage1_${FIRMWAREVERSION}.bin" --stage2 \
     "${STAGES_DIR}/stage2_${FIRMWAREVERSION}.bin"; then
     [[ $SHUTDOWN == "yes" ]] && systemctl poweroff
+    exit 0
 fi
 
+exit 1
