@@ -1,8 +1,14 @@
 #!/bin/bash
+#
+# FIXME(sjr): handle errors 
 
 set -euo pipefail
 
 FIRMWAREVERSION="${1:-1100}"
+
+deps() {
+    dnf install --refresh -y gcc g++ llvm cmake libpcap-devel dpdk-devel bison
+}
 
 pppwn_binary() {
     pushd .
@@ -37,6 +43,7 @@ usage() {
 }
 
 main() {
+    deps
     pppwn_binary
     pppwn_stages
     misc
