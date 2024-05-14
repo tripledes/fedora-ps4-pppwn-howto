@@ -28,7 +28,7 @@ misc() {
     install -D -o root -g root -m 644 config/example.conf /usr/local/etc/pppwn.conf && \
         install -D -o root -g root -m 555 scripts/pppwn-wrapper.sh /usr/local/bin/pppwn-wrapper
 
-    restorecon -FRv /usr/local/{bin,share} /etc/systemd/system
+    restorecon -FRv /usr/local/{etc,bin,share} /etc/systemd/system
 }
 
 usage() {
