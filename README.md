@@ -18,7 +18,7 @@ For the steps below to work you need a working Fedora 40 installation in a Raspb
   ```shell
   $ git clone --recurse-submodules https://github.com/tripledes/fedora-ps4-pppwn-howto.git
   $ cd fedora-ps4-pppwn-howto
-  $ sudo ./install.sh 1100 # or 900
+  $ sudo ./install.sh 1100 # 900 1000
   ```
 - Edit the _/usr/local/etc/pppwn.conf_ file and adjust the values
 - Configure your PS4 PPPoe connection as instructed by all the tutorials out there and shut it down completely
@@ -31,6 +31,12 @@ For the steps below to work you need a working Fedora 40 installation in a Raspb
 - The PS4 boots faster than the RPI3 B+, use the patience ;-)
 - The PPPwn service will start and execute the required commands, if successful, the RPI will shut down itself, if not it will keep restarting the process
 - Successful attempts will show the usual **PPPwned** message
+
+## Cleaning up
+
+```shell
+$ sudo ./install.sh uninstall
+```
 
 ## Credits
 
