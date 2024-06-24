@@ -20,22 +20,20 @@ pppwn_binary() {
     popd
 }
 
-systemd_service() {
-    install -o root -g root -m 644 systemd/pppwn.service /etc/systemd/system/ && \
-        sed -i -e "s@REPLACE_BASE_DIR@${BASE_DIR}@g" /etc/systemd/system/pppwn.service && \
-        systemctl daemon-reload && \
-        systemctl enable --now pppwn.service
-}
-
 pppwn_stages() {
     install -D -o root -g root -m 444 stages/"stage1_${FIRMWAREVERSION}".bin ${BASE_DIR}/share/pppwn/"stage1_${FIRMWAREVERSION}".bin && \
         install -D -o root -g root -m 444 stages/"stage2_${FIRMWAREVERSION}".bin ${BASE_DIR}/share/pppwn/"stage2_${FIRMWAREVERSION}".bin
 }
 
 misc() {
+    install -o root -g root -m 644 systemd/pppwn.service /etc/systemd/system/ && \
+        sed -i -e "s@REPLACE_BASE_DIR@${BASE_DIR}@g" /etc/systemd/system/pppwn.service && \
+        systemctl daemon-reload && \
+        systemctl enable --now pppwn.service
     install -D -o root -g root -m 644 config/example.conf ${BASE_DIR}/etc/pppwn.conf && \
         restorecon -FRv ${BASE_DIR}/etc/pppwn.conf ${BASE_DIR}/bin/pppwn \
-        ${BASE_DIR}/share/pppwn /etc/systemd/system/pppwn.service
+            ${BASE_DIR}/share/pppwn /etc/systemd/system/pppwn.service && \
+        systemctl enable --now pppwn.service
 }
 
 usage() {
@@ -66,7 +64,6 @@ main() {
     pppwn_binary
     pppwn_stages
     misc
-    systemd_service
 }
 
 [[ $# -ne 1 ]] && usage
