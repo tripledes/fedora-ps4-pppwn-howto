@@ -5,6 +5,7 @@
 set -euo pipefail
 
 FIRMWAREVERSION="${1:-1100}"
+BASE_DIR=/usr/local
 
 deps() {
     dnf install --refresh -y gcc g++ llvm cmake libpcap-devel dpdk-devel bison
@@ -15,31 +16,49 @@ pppwn_binary() {
     cd PPPwn_cpp
     cmake -B build && \
         cmake --build build -t pppwn -- -j2 && \
-        install -D -o root -g root -m 555 build/pppwn /usr/local/bin/
+        install -D -o root -g root -m 555 build/pppwn ${BASE_DIR}/bin/
     popd
 }
 
 systemd_service() {
     install -o root -g root -m 644 systemd/pppwn.service /etc/systemd/system/ && \
+        sed -i -e "s@REPLACE_BASE_DIR@${BASE_DIR}@g" /etc/systemd/system/pppwn.service && \
         systemctl daemon-reload && \
         systemctl enable --now pppwn.service
 }
 
 pppwn_stages() {
-    install -D -o root -g root -m 444 stages/"stage1_${FIRMWAREVERSION}".bin /usr/local/share/pppwn/"stage1_${FIRMWAREVERSION}".bin && \
-        install -D -o root -g root -m 444 stages/"stage2_${FIRMWAREVERSION}".bin /usr/local/share/pppwn/"stage2_${FIRMWAREVERSION}".bin
+    install -D -o root -g root -m 444 stages/"stage1_${FIRMWAREVERSION}".bin ${BASE_DIR}/share/pppwn/"stage1_${FIRMWAREVERSION}".bin && \
+        install -D -o root -g root -m 444 stages/"stage2_${FIRMWAREVERSION}".bin ${BASE_DIR}/share/pppwn/"stage2_${FIRMWAREVERSION}".bin
 }
 
 misc() {
-    install -D -o root -g root -m 644 config/example.conf /usr/local/etc/pppwn.conf && \
-        install -D -o root -g root -m 555 scripts/pppwn-wrapper.sh /usr/local/bin/pppwn-wrapper
-
-    restorecon -FRv /usr/local/{etc,bin,share} /etc/systemd/system
+    install -D -o root -g root -m 644 config/example.conf ${BASE_DIR}/etc/pppwn.conf && \
+        restorecon -FRv ${BASE_DIR}/etc/pppwn.conf ${BASE_DIR}/bin/pppwn \
+        ${BASE_DIR}/share/pppwn /etc/systemd/system/pppwn.service
 }
 
 usage() {
-    echo "$0 (900|1100)"
+    echo "$0 (900|1000|1100|uninstall)"
     exit 0
+}
+
+uninstall() {
+    rm -r "${BASE_DIR}/share/pppwn"
+    rm -r "${BASE_DIR}/bin/pppwn"
+    rm "${BASE_DIR}/etc/pppwn.conf"
+
+    if (systemctl is-enabled pppwn.service); then
+        systemctl disable --now pppwn.service
+    fi
+
+    rm /etc/systemd/system/pppwn.service
+
+    systemctl daemon-reload
+
+    if [[ -f "${BASE_DIR}/bin/pppwn-wrapper" ]]; then
+        rm "${BASE_DIR}/bin/pppwn-wrapper"
+    fi
 }
 
 main() {
@@ -52,4 +71,14 @@ main() {
 
 [[ $# -ne 1 ]] && usage
 
-main
+case $1 in
+    900|1000|1100)
+        main
+        ;;
+    "uninstall")
+        uninstall
+        ;;
+    *)
+       usage
+        ;;
+esac

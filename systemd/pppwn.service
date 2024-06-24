@@ -1,9 +1,16 @@
 [Unit]
 Description=PS4 PPPwn
 After=network.target
+OnSuccess=poweroff.target
 
 [Service]
-ExecStart=/usr/local/bin/pppwn-wrapper
+EnvironmentFile=REPLACE_BASE_DIR/etc/pppwn.conf
+ExecStartPre=/usr/sbin/ip link set ${PPPWN_INTERFACE} up
+ExecStart=REPLACE_BASE_DIR/bin/pppwn --interface ${PPPWN_INTERFACE} \
+            --fw ${PPPWN_FIRMWAREVERSION} --stage1 \
+            REPLACE_BASE_DIR/share/pppwn/stage1_${PPPWN_FIRMWAREVERSION}.bin --stage2 \
+            REPLACE_BASE_DIR/share/pppwn/stage2_${PPPWN_FIRMWAREVERSION}.bin
+ExecStopPost=/usr/sbin/ip link set ${PPPWN_INTERFACE} down
 Restart=on-failure
 
 [Install]
