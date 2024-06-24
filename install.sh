@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-FIRMWAREVERSION="${1:-1100}"
+FIRMWAREVERSION="1100"
 BASE_DIR=/usr/local
 
 deps() {
@@ -39,7 +39,7 @@ misc() {
 }
 
 usage() {
-    echo "$0 (900|1000|1100|uninstall)"
+    echo "$0 (1100|uninstall)"
     exit 0
 }
 
@@ -72,7 +72,7 @@ main() {
 [[ $# -ne 1 ]] && usage
 
 case $1 in
-    900|1000|1100)
+    1100)
         main
         ;;
     "uninstall")
